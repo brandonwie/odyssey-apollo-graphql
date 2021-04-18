@@ -87,6 +87,26 @@ The mockup
 
 <img src="https://res.cloudinary.com/apollographql/image/upload/e_sharpen:50,c_scale,q_90,w_960,fl_progressive/v1612409160/odyssey/lift-off-part1/LO_02_v2.00_04_53_09.Still002_g8xow6_bbgabz.jpg" width="100%" alt="Catstronauts Data Graph">
 
+---
+
 ## Schema defintion language (SDL)
+
+<img src="https://res.cloudinary.com/apollographql/image/upload/e_sharpen:50,c_scale,q_90,w_960,fl_progressive/v1612409235/odyssey/lift-off-part1/type_spacecat_aymp3y_l04j48.jpg" width="100%" alt="Schema Definition Language">
+
+Define a `SpaceCat` type with the following fields: `name` of type `String` (non null), `age` of type `Int`, and `missions` of type List of `Mission`
+
+    ```typescript
+    const typeDefs = gql`
+    """
+    block description
+    """
+    type SpaceCat {
+    "normal description"
+    name: String!
+    age: Int
+    missions: [Mission]
+    }
+    `
+    ```
 
 \*The resources used in this tutorial are from [Odyssey](https://odyssey.apollographql.com/).
