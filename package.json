@@ -1,0 +1,21 @@
+{
+	"name": "apollographql",
+	"version": "1.0.0",
+	"description": "Official Apollo's Odyssey course",
+	"scripts": {
+		"start": "concurrently \"cd client && npm start\" \"cd server && npm run start\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/apollographql/odyssey-lift-off-part1.git"
+	},
+	"author": "Seokhyun Wie",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/apollographql/odyssey-lift-off-part1/issues"
+	},
+	"homepage": "https://github.com/apollographql/odyssey-lift-off-part1#readme",
+	"devDependencies": {
+		"concurrently": "^6.0.2"
+	}
+}
