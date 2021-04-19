@@ -15,7 +15,7 @@ git clone https://github.com/apollographql/odyssey-lift-off-part1 apollographql
 
 In `apollographql/`,
 
-```
+```console
 📦 catstronauts-demo
 ┣ 📂 client
 ┃ ┣ 📂 public
@@ -95,18 +95,167 @@ The mockup
 
 Define a `SpaceCat` type with the following fields: `name` of type `String` (non null), `age` of type `Int`, and `missions` of type List of `Mission`
 
-    ```typescript
-    const typeDefs = gql`
-    """
-    block description
-    """
-    type SpaceCat {
+```typescript
+const typeDefs = gql`
+  """
+  block description
+  """
+  type SpaceCat {
     "normal description"
     name: String!
     age: Int
     missions: [Mission]
+  }
+`;
+```
+
+## Building our schema
+
+```javascript
+const { gql } = require('apollo-server');
+
+const typeDefs = gql`
+  type Query {
+    "Query to get tracks array for the homepage grid"
+    tracksForHome: [Track!]!
+  }
+  "A track is a group of Modules that teaches about a specific topic"
+  type track {
+    id: ID!
+    "the track's title"
+    title: String!
+    "the track's main author"
+    author: Author!
+    "the tracks' main illustration to display in track card or track page detail"
+    thumbnail: String
+    "the track's approximate length to complete, in minutes"
+    length: Int
+    "the number of modules this track contains"
+    modulesCount: Int
+  }
+
+  "Author of a complete Track"
+  type Author {
+    id: ID!
+    "Author's first and last name"
+    name: String!
+    "Author's profile picture url"
+    photo: String
+  }
+`;
+
+module.exports = typeDefs;
+```
+
+## Apollo Server
+
+```javascript
+const { ApolloServer, MockList } = require('apollo-server');
+const typeDefs = require('./schema');
+
+const mocks = {
+  Query: () => ({
+    tracksForHome: () => new MockList([6, 9]),
+  }),
+  Track: () => ({
+    id: () => 'track_01',
+    title: () => 'Astro Kitty, Space Explorer',
+    author: () => {
+      return {
+        name: 'Grumpy Cat',
+        photo:
+          'https://res.cloudinary.com/dety84pbu/image/upload/v1606816219/kitty-veyron-sm_mctf3c.jpg',
+      };
+    },
+    thumbnail: () =>
+      'https://res.cloudinary.com/dety84pbu/image/upload/v1598465568/nebula_cat_djkt9r.jpg',
+    length: () => 1210,
+    modulesCount: () => 6,
+  }),
+};
+const server = new ApolloServer({
+  typeDefs,
+  mocks,
+});
+
+server.listen().then(({ url }) => {
+  console.log(`
+  🚀  Server is running!
+  🔉  Listening at ${url}
+  📭  Query at https://studio.apollographql.com/dev
+  `);
+});
+```
+
+## React App
+
+```console
+📂client
+  ┣ 📂src
+  ┃ ┣ 📂assets
+  ┃ ┣ 📂components
+  ┃ ┣ 📂containers
+  ┃ ┣ 📂pages
+  ┃ ┣ ...
+  ┣ ...
+```
+
+```javascript
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import GlobalStyles from './styles';
+import Pages from './pages';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+  url: 'http://localhost:4000',
+  cache: new InMemoryCache(),
+});
+
+ReactDOM.render(
+  <ApolloProvider client={client}>
+    <GlobalStyles />
+    <Pages />
+  </ApolloProvider>,
+  document.getElementById('root')
+);
+```
+
+## Defining a query
+
+```javascript
+// client/src/pages/tracks.js
+import React from 'react';
+import { Layout } from '../components';
+import { gql } from '@apollo/client';
+
+const TRACKS = gql`
+  query getTracks {
+    tracksForHome {
+      id
+      title
+      thumbnail
+      length
+      modulesCount
+      author {
+        id
+        name
+        photo
+      }
     }
-    `
-    ```
+  }
+`;
+
+/**
+ * Tracks Page is the Catstronauts home page.
+ * We display a grid of tracks fetched with useQuery with the TRACKS query
+ */
+const Tracks = () => {
+  return <Layout grid> </Layout>;
+};
+
+export default Tracks;
+```
 
 \*The resources used in this tutorial are from [Odyssey](https://odyssey.apollographql.com/).
